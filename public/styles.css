@@ -1,0 +1,74 @@
+/* Basic styling for the entire body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Styling for headers */
+h2,
+h3 {
+    color: #333;
+}
+
+/* List styling */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+/* Button styling inside forms */
+button {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+/* Inline form style */
+.inline-form {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Login Status message */
+p {
+    font-style: italic;
+    color: #555;
+}
+
+/* The body style will inherit from the Welcome Page */
+
+/* User Info Page specific styles */
+/* Header styling */
+h2 {
+    margin-bottom: 20px;
+}
+
+/* Paragraph styling */
+p {
+    background-color: #eef;
+    border-left: 4px solid #5cb85c;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+/* JWT token specific style */
+p:nth-of-type(2) {
+    /* This targets the second <p> element, which contains the JWT */
+    background-color: #fee;
+    border-color: #d9534f;
+}
