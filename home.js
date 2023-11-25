@@ -92,4 +92,4 @@ router.get('/profile', requiresAuth(), (req, res) => {
 
 /* ------------- End Auth0 login/logout/profile ------------- */
 
-module.exports = { router };
+module.exports = { router, customJwtMiddleware };

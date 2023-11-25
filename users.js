@@ -21,7 +21,7 @@ const axios = require('axios');
 const delete_relationship_user_boat = require('./helpers').delete_relationship_user_boat;
 
 // boat functions for user-boat relationship
-const get_boat = require('./boats').get_boat;
+const get_boat_helper = require('./boats').get_boat_helper;
 const update_boat = require('./boats').update_boat;
 
 /* ------------- Begin User Model Functions ------------- */
@@ -55,7 +55,7 @@ async function get_user(id) {
 
 // get all users with pagination
 async function get_users_pagination(req) {
-    var q = datastore.createQuery(USER).limit(3);
+    var q = datastore.createQuery(USER).limit(5);
     const results = {};
     if (Object.keys(req.query).includes("cursor")) {
         q = q.start(req.query.cursor);
@@ -172,7 +172,7 @@ router.put('/:uid/boats/:bid', async function (req, res) {
     const bid = req.params.bid;
 
     const user = await get_user(uid);
-    const boat = await get_boat(bid);
+    const boat = await get_boat_helper(bid);
 
     if (boat[0] === undefined || boat[0] === null || user[0] === undefined || user[0] === null) {
         res.status(404).json({ 'Error': 'The specified user and/or boat does not exist' });
@@ -200,7 +200,7 @@ router.get('/:id/boats', async function (req, res) {
                 user[0]["self"] = APP_URL + "/users/" + id;
 
                 user[0]["boats"] = user[0]["boats"].map(async boatId => {
-                    const getBoat = await get_boat(boatId);
+                    const getBoat = await get_boat_helper(boatId);
                     return {
                         "id": boatId,
                         "name": getBoat[0].name,
@@ -221,7 +221,7 @@ router.delete('/:uid/boats/:bid', async function (req, res) {
     const bid = req.params.bid;
 
     const user = await get_user(uid);
-    const boat = await get_boat(bid);
+    const boat = await get_boat_helper(bid);
 
     if (boat[0] === undefined || boat[0] === null || user[0] === undefined || user[0] === null) {
         res.status(404).json({ 'Error': 'No user with this user_id owns the boat with this boat_id' });
@@ -234,7 +234,7 @@ router.delete('/:uid/boats/:bid', async function (req, res) {
                 res.status(404).json({ 'Error': 'No user with this user_id owns the boat with this boat_id' });
             }
             else {
-                await delete_relationship_user_boat(uid, bid, get_boat, update_boat)
+                await delete_relationship_user_boat(uid, bid, get_boat_helper, update_boat)
                     .then(() => res.status(204).end())
             }
         }

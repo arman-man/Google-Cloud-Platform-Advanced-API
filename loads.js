@@ -40,7 +40,7 @@ async function get_load(id) {
 
 // get all loads with pagination
 async function get_loads(req) {
-    var q = datastore.createQuery(LOAD).limit(3); // Assuming LOAD is the kind for loads in your datastore and you want to limit the query to 5 items
+    var q = datastore.createQuery(LOAD).limit(5); // Assuming LOAD is the kind for loads in your datastore and you want to limit the query to 5 items
     const results = {};
     if (Object.keys(req.query).includes("cursor")) {
         q = q.start(req.query.cursor);

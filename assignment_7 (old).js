@@ -19,7 +19,7 @@ app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
 
 // enviornment variables
-const { BOAT, USER, APP_URL, CLIENT_ID, CLIENT_SECRET, DOMAIN } = require('./constants');
+const { BOAT, APP_URL, CLIENT_ID, CLIENT_SECRET, DOMAIN } = require('./constants');
 
 // get item from datastore
 function fromDatastore(item) {
@@ -73,8 +73,7 @@ const { requiresAuth } = require('express-openid-connect');
 const config = {
     authRequired: false,
     auth0Logout: true,
-    //baseURL: 'http://localhost:8080',
-    baseURL: 'https://hw7-manukyaa.uw.r.appspot.com',
+    baseURL: APP_URL,
     clientID: CLIENT_ID,
     issuerBaseURL: 'https://' + DOMAIN,
     secret: CLIENT_SECRET
