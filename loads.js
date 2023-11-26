@@ -17,6 +17,12 @@ const { LOAD, APP_URL } = require('./constants');
 // helper function for managing boat-load relationship
 const delete_relationship_boat_load = require('./helpers').delete_relationship_boat_load;
 
+// middleware for 405
+const methodNotAllowed = require('./helpers').methodNotAllowed
+
+// middleware for 406
+const checkAccepts = require('./helpers').checkAccepts
+
 /* ------------- Begin load Model Functions ------------- */
 
 // create a load
@@ -57,7 +63,7 @@ async function get_loads(req) {
 // update a load
 async function update_load(id, volume, item, creation_date, carrier) {
     const key = datastore.key([LOAD, parseInt(id, 10)]);
-    if (carrier == null || carrier == undefined) {
+    if (carrier === null || carrier === undefined) {
         const load = { "volume": volume, "item": item, "creation_date": creation_date, "carrier": null };
         return datastore.save({ "key": key, "data": load });
     }
@@ -78,7 +84,7 @@ async function delete_load(id) {
 /* ------------- Begin Controller Functions ------------- */
 
 // create a load
-router.post('/', function (req, res) {
+router.post('/', checkAccepts, function (req, res) {
     const volume = req.body.volume;
     const item = req.body.item;
     const creation_date = req.body.creation_date;
@@ -102,26 +108,8 @@ router.post('/', function (req, res) {
     }
 });
 
-// get a specified load
-router.get('/:id', function (req, res) {
-    const id = req.params.id;
-
-    get_load(id)
-        .then(load => {
-            if (load[0] === undefined || load[0] === null) {
-                res.status(404).json({ 'Error': 'No load with this load_id exists' });
-            } else {
-                load[0]["self"] = APP_URL + "/loads/" + id;
-                if (load[0].carrier != null && load[0].carrier != undefined) {
-                    load[0].carrier["self"] = APP_URL + "/boats/" + load[0].carrier.id;
-                }
-                res.status(200).json(load[0]);
-            }
-        });
-});
-
 // get all loads
-router.get('/', function (req, res) {
+router.get('/', checkAccepts, function (req, res) {
     get_loads(req) // Assuming this function is now modified to handle pagination and return all loads.
         .then(results => {
             const loads = results.items.map(load => {
@@ -156,8 +144,26 @@ router.get('/', function (req, res) {
         });
 });
 
+// get a specified load
+router.get('/:id', checkAccepts, function (req, res) {
+    const id = req.params.id;
+
+    get_load(id)
+        .then(load => {
+            if (load[0] === undefined || load[0] === null) {
+                res.status(404).json({ 'Error': 'No load with this load_id exists' });
+            } else {
+                load[0]["self"] = APP_URL + "/loads/" + id;
+                if (load[0].carrier !== null && load[0].carrier !== undefined) {
+                    load[0].carrier["self"] = APP_URL + "/boats/" + load[0].carrier.id;
+                }
+                res.status(200).json(load[0]);
+            }
+        });
+});
+
 // put load volume, item, and creation_date
-router.put('/:id', async function (req, res) {
+router.put('/:id', checkAccepts, async function (req, res) {
     if (req.get("content-type") !== "application/json") {
         res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." })
     }
@@ -187,7 +193,7 @@ router.put('/:id', async function (req, res) {
 });
 
 // patch load volume, item, or creation_date
-router.patch('/:id', async function (req, res) {
+router.patch('/:id', checkAccepts, async function (req, res) {
     if (req.get("content-type") !== "application/json") {
         res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." })
     }
@@ -224,7 +230,7 @@ router.patch('/:id', async function (req, res) {
 });
 
 // delete a specified load
-router.delete('/:id', async function (req, res) {
+router.delete('/:id', checkAccepts, async function (req, res) {
     const id = req.params.id;
     const load = await get_load(id);
 
@@ -233,7 +239,7 @@ router.delete('/:id', async function (req, res) {
         res.status(404).json({ 'Error': 'No load with this load_id exists' });
     } else {
         //no carrier inside load
-        if (load[0].carrier == null || load[0].carrier == undefined || load[0].carrier == []) {
+        if (load[0].carrier === null || load[0].carrier === undefined || load[0].carrier === undefined) {
             delete_load(id).then(() => res.status(204).end())
         }
         //load contains carrier, delete the relationship, then delete load
@@ -246,6 +252,12 @@ router.delete('/:id', async function (req, res) {
     }
 });
 
+// Handle unsupported methods for '/:id'
+router.all('/:id', methodNotAllowed);
+
+// Handle unsupported methods for '/'
+router.all('/', methodNotAllowed);
+
 /* ------------- End Controller Functions ------------- */
 
-module.exports = { router, get_load, update_load };
+module.exports = { router, get_load, update_load, post_load };

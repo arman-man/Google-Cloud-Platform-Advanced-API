@@ -9,35 +9,18 @@ router.use(bodyParser.json());
 // enviornment variables
 const { CLIENT_ID, CLIENT_SECRET, DOMAIN, APP_URL } = require('./constants');
 
-// functions imported from './users' to create user accounts using Auth0
-const get_all_users_helper = require('./users').get_all_users_helper;
+// Axios for HTTP requests
+const axios = require('axios');
+
+// functions to create users
 const post_user = require('./users').post_user;
+const get_users = require('./users').get_users;
 
-// jwt authentication
-const jwt = require('express-jwt');
-const jwksRsa = require('jwks-rsa');
+// middleware for 405
+const methodNotAllowed = require('./helpers').methodNotAllowed
 
-// jwt authentication middleware
-const checkJwt = jwt({
-    secret: jwksRsa.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `https://${DOMAIN}/.well-known/jwks.json`
-    }),
-
-    // Validate the audience and the issuer.
-    issuer: `https://${DOMAIN}/`,
-    algorithms: ['RS256']
-});
-
-// custom JWT middleware
-const customJwtMiddleware = (req, res, next) => {
-    checkJwt(req, res, err => {
-        // JWT validation error or no token, but still proceed
-        next();
-    });
-};
+// middleware for 406
+const checkAccepts = require('./helpers').checkAccepts
 
 /* ------------- Begin Auth0 login/logout/profile ------------- */
 
@@ -63,7 +46,7 @@ router.use(auth(config));
 // req.isAuthenticated is provided from the auth router
 router.get('/', async (req, res) => {
     if (req.oidc.isAuthenticated()) {
-        const users = await get_all_users_helper();
+        const users = await get_users();
         const userName = req.oidc.user.name;
 
         // Check if the user's name is already in the database
@@ -90,6 +73,59 @@ router.get('/profile', requiresAuth(), (req, res) => {
     res.render('profile', { user_JWT_id_token: user_JWT_id_token, user_name: user_name });
 });
 
+// authentication and adding user to database if it isn't already in database (for use with Postman only)
+router.post('/login', checkAccepts, function (req, res) {
+    const username = req.body.username;
+    const password = req.body.password;
+    const boats = req.body.boats || null;
+
+    axios.post(`https://${DOMAIN}/oauth/token`, {
+        grant_type: 'password',
+        username: username,
+        password: password,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET
+    })
+        .then(async response => {
+
+            let responseData = response.data
+
+            const users = await get_users();
+
+            // Check if the username is already in the database
+            const userExists = users.some(user => user.name === username);
+
+            if (!userExists) {
+                // If the user does not exist, add them to the database
+                const key = await post_user(username, boats);
+
+                responseData = {
+                    ...response.data,
+                    "user": username,
+                    "boats": boats,
+                    "self": APP_URL + "/users/" + key.id
+                }
+            }
+
+            res.json(responseData);
+        })
+        .catch(error => {
+            res.status(500).json(error.message);
+        });
+});
+
+// Handle unsupported methods for '/login'
+router.all('/login', methodNotAllowed);
+
+// Handle unsupported methods for '/login'
+router.all('/logout', methodNotAllowed);
+
+// Handle unsupported methods for '/login'
+router.all('/profile', methodNotAllowed);
+
+// Handle unsupported methods for '/'
+router.all('/', methodNotAllowed);
+
 /* ------------- End Auth0 login/logout/profile ------------- */
 
-module.exports = { router, customJwtMiddleware };
+module.exports = { router };
