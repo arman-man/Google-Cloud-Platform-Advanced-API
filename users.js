@@ -73,7 +73,8 @@ async function get_users_pagination(req) {
 
 /* ------------- Begin Controller Functions ------------- */
 
-// authentication and user creation (for use with Postman)
+/* I don't think I need this function at all
+// authentication and adding user to database (for use with Postman)
 router.post('/', function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
@@ -113,6 +114,7 @@ router.post('/', function (req, res) {
             res.status(500).json(error.message);
         });
 });
+*/
 
 // get a specified user
 router.get('/:id', function (req, res) {
@@ -164,81 +166,6 @@ router.get('/', function (req, res) {
             }
             res.status(200).json(response);
         })
-});
-
-// create relationship between user-boat
-router.put('/:uid/boats/:bid', async function (req, res) {
-    const uid = req.params.uid;
-    const bid = req.params.bid;
-
-    const user = await get_user(uid);
-    const boat = await get_boat_helper(bid);
-
-    if (boat[0] === undefined || boat[0] === null || user[0] === undefined || user[0] === null) {
-        res.status(404).json({ 'Error': 'The specified user and/or boat does not exist' });
-    } else {
-        if (boat[0].owner !== null) {
-            res.status(403).json({ 'Error': 'The boat is already owned by another user' });
-        }
-        else {
-            await put_reservation(uid, bid)
-                .then(() => res.status(204).end());
-        }
-    }
-
-});
-
-// get a specified owner's boats
-router.get('/:id/boats', async function (req, res) {
-    const id = req.params.id;
-
-    get_user(id)
-        .then(user => {
-            if (user[0] === undefined || user[0] === null) {
-                res.status(404).json({ 'Error': 'No user with this user_id exists' });
-            } else {
-                user[0]["self"] = APP_URL + "/users/" + id;
-
-                user[0]["boats"] = user[0]["boats"].map(async boatId => {
-                    const getBoat = await get_boat_helper(boatId);
-                    return {
-                        "id": boatId,
-                        "name": getBoat[0].name,
-                        "type": getBoat[0].type,
-                        "length": getBoat[0].length,
-                        "loads": getBoat[0].loads,
-                        "self": APP_URL + "/boats/" + boatId
-                    };
-                });
-                res.status(200).json(user[0]);
-            }
-        });
-});
-
-// delete relationship between user-boat
-router.delete('/:uid/boats/:bid', async function (req, res) {
-    const uid = req.params.uid;
-    const bid = req.params.bid;
-
-    const user = await get_user(uid);
-    const boat = await get_boat_helper(bid);
-
-    if (boat[0] === undefined || boat[0] === null || user[0] === undefined || user[0] === null) {
-        res.status(404).json({ 'Error': 'No user with this user_id owns the boat with this boat_id' });
-    } else {
-        if (boat[0].owner === null) {
-            res.status(404).json({ 'Error': 'No user with this user_id owns the boat with this boat_id' });
-        }
-        else {
-            if (boat[0].owner.id != uid) {
-                res.status(404).json({ 'Error': 'No user with this user_id owns the boat with this boat_id' });
-            }
-            else {
-                await delete_relationship_user_boat(uid, bid, get_boat_helper, update_boat)
-                    .then(() => res.status(204).end())
-            }
-        }
-    }
 });
 
 /* ------------- End Controller Functions ------------- */

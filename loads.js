@@ -157,7 +157,7 @@ router.get('/', function (req, res) {
 });
 
 // put load volume, item, and creation_date
-router.put("/:id", async function (req, res) {
+router.put('/:id', async function (req, res) {
     if (req.get("content-type") !== "application/json") {
         res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." })
     }
@@ -187,7 +187,7 @@ router.put("/:id", async function (req, res) {
 });
 
 // patch load volume, item, or creation_date
-router.patch("/:id", async function (req, res) {
+router.patch('/:id', async function (req, res) {
     if (req.get("content-type") !== "application/json") {
         res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." })
     }
