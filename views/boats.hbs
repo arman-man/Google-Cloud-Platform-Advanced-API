@@ -1,8 +1,20 @@
-<h2>GET /boats</h2>
-
-<p>Response: {{response}}</p>
-
-<form action="/loads" method="GET" class="inline-form">
-    <input type="hidden" name="format" value="html">
-    <button type="submit">Loads</button>
-</form>
+<h2>Boats</h2>
+{{#each boats}}
+<div>
+    <p>ID: {{this.id}}</p>
+    <p>name: {{this.name}}</p>
+    <p>owner: {{this.owner}}</p>
+    <p>type: {{this.type}}</p>
+    <p>length: {{this.length}}</p>
+    {{#if this.loads}}
+    <p>loads:</p>
+    <ul>
+        {{#each this.loads}}
+        <li>ID: {{this.id}}</li>
+        {{/each}}
+    </ul>
+    {{else}}
+    <p>loads: no loads</p>
+    {{/if}}
+</div>
+{{/each}}

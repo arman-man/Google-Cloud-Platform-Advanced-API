@@ -7,10 +7,8 @@ const { engine } = require('express-handlebars');
 app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
 
-/*
 // to serve static files (in this case styles.css)
 app.use(express.static('public'));
-*/
 
 // router indexes
 app.use('/', require('./index'));

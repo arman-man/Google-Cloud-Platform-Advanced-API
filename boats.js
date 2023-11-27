@@ -230,15 +230,7 @@ router.get('/', customJwtMiddleware, checkAccepts, function (req, res) {
                     response.next = boats.next;
                 }
 
-                // Check the format query parameter
-                const format = req.query.format;
-                if (format === 'html') {
-                    // Render the page with the boats data
-                    res.render('boats', { response: response });
-                } else {
-                    // Default to JSON response if no format is specified or if format is not 'html'
-                    res.status(200).json(response);
-                }
+                res.status(200).json(response);
             })
             .catch(error => {
                 res.status(500).send(error.message);
@@ -496,6 +488,11 @@ router.get('/:id/loads', customJwtMiddleware, checkAccepts, async function (req,
         .catch(error => {
             res.status(500).json({ 'Error': 'An error occurred while fetching the boat data' });
         });
+});
+
+router.post('/renderBoats', (req, res) => {
+    const boatsData = req.body.boats; // Extract the boats data from the request body
+    res.render('boats', { boats: boatsData }); // Render boats.hbs with the boats data
 });
 
 // Handle unsupported methods for '/:id'
