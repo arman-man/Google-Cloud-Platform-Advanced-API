@@ -77,7 +77,7 @@ router.get('/profile', requiresAuth(), (req, res) => {
 router.post('/login', checkAccepts, function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
-    const boats = req.body.boats || null;
+    const boats = req.body.boats || [];
 
     axios.post(`https://${DOMAIN}/oauth/token`, {
         grant_type: 'password',
@@ -103,11 +103,10 @@ router.post('/login', checkAccepts, function (req, res) {
                     ...response.data,
                     "user": username,
                     "boats": boats,
-                    "self": APP_URL + "/users/" + key.id
                 }
             }
 
-            res.json(responseData);
+            res.status(200).json(responseData);
         })
         .catch(error => {
             res.status(500).json(error.message);

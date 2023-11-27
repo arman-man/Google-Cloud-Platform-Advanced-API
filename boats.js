@@ -152,7 +152,7 @@ router.post('/', customJwtMiddleware, checkAccepts, async function (req, res) {
         return res.status(401).json({ 'Error': 'Missing/Invalid JWT' });
     }
 
-    const { name, type, length, loads = null } = req.body;
+    const { name, type, length, loads = [] } = req.body;
     const ownerName = req.user.name;
 
     // Validate request body
@@ -219,10 +219,6 @@ router.get('/', customJwtMiddleware, checkAccepts, function (req, res) {
                         };
                     });
 
-                    if (boat.owner) {
-                        boat.owner["self"] = APP_URL + "/users/" + boat.owner.id;
-                    }
-
                     return boat;
                 });
 
@@ -251,6 +247,29 @@ router.get('/', customJwtMiddleware, checkAccepts, function (req, res) {
         // No or invalid JWT
         res.status(401).json({ 'Error': 'No authentication' });
     }
+});
+
+// with authentication - get a specified boat
+router.get('/:id', customJwtMiddleware, checkAccepts, function (req, res) {
+    let id = req.params.id;
+
+    get_boat(id)
+        .then(boat => {
+            if (boat[0] === undefined || boat[0] === null) {
+                res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
+            } else {
+                boat[0]["self"] = APP_URL + "/boats/" + id;
+
+                boat[0]["loads"] = boat[0]["loads"].map(loadId => {
+                    return {
+                        "id": loadId,
+                        "self": APP_URL + "/loads/" + loadId
+                    };
+                });
+
+                res.status(200).json(boat[0]);
+            }
+        });
 });
 
 // with authentication - put boat name, type, length

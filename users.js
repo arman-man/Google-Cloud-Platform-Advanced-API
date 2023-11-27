@@ -9,7 +9,7 @@ const { USER } = require('./constants');
 /* ------------- Begin User Model Functions ------------- */
 
 // create a user
-async function post_user(name, boats = null) {
+async function post_user(name, boats = []) {
     var key = datastore.key(USER);
     const new_user = { "name": name, "boats": boats };
     return datastore.save({ "key": key, "data": new_user }).then(() => { return key });
@@ -39,7 +39,7 @@ async function get_user(id) {
 async function update_user(id, name, boats) {
     const key = datastore.key([USER, parseInt(id, 10)]);
     if (boats === null || boats === undefined) {
-        const user = { "name": name, "boats": null };
+        const user = { "name": name, "boats": [] };
         return datastore.save({ "key": key, "data": user });
     }
     else {
