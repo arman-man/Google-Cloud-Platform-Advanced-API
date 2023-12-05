@@ -26,9 +26,9 @@ const checkAccepts = require('./helpers').checkAccepts
 /* ------------- Begin load Model Functions ------------- */
 
 // create a load
-async function post_load(volume, item, creation_date, carrier) {
+async function post_load(volume, item, creation_date) {
     var key = datastore.key(LOAD);
-    const new_load = { "volume": volume, "item": item, "creation_date": creation_date, "carrier": carrier };
+    const new_load = { "volume": volume, "item": item, "creation_date": creation_date, "carrier": null };
     return datastore.save({ "key": key, "data": new_load }).then(() => { return key });
 }
 
@@ -88,20 +88,19 @@ router.post('/', checkAccepts, function (req, res) {
     const volume = req.body.volume;
     const item = req.body.item;
     const creation_date = req.body.creation_date;
-    const carrier = req.body.carrier || null;
 
     if (!volume || !item || !creation_date) {
         res.status(400).json({ "Error": "The request object is missing at least one of the required attributes" });
     }
     else {
-        post_load(volume, item, creation_date, carrier)
+        post_load(volume, item, creation_date)
             .then((key) => {
                 res.status(201).json({
                     "id": key.id,
                     "volume": volume,
                     "item": item,
                     "creation_date": creation_date,
-                    "carrier": carrier,
+                    "carrier": null,
                     "self": APP_URL + "/loads/" + key.id
                 });
             });
@@ -178,7 +177,7 @@ router.put('/:id', checkAccepts, async function (req, res) {
             const volume = req.body.volume;
             const item = req.body.item;
             const creation_date = req.body.creation_date;
-            const carrier = req.body.carrier;
+            const carrier = null;
 
             //input validation
             if (!volume || !item || !creation_date) {
@@ -186,7 +185,14 @@ router.put('/:id', checkAccepts, async function (req, res) {
             }
             else {
                 await update_load(id, volume, item, creation_date, carrier)
-                res.status(303).location(req.protocol + "://" + req.get("host") + req.baseUrl + "/" + id).end();
+                res.status(303).location(req.protocol + "://" + req.get("host") + req.baseUrl + "/" + id).json({
+                    "id": id,
+                    "volume": volume,
+                    "item": item,
+                    "creation_date": creation_date,
+                    "carrier": carrier,
+                    "self": APP_URL + "/loads/" + id
+                });
             }
         }
     }
@@ -215,14 +221,20 @@ router.patch('/:id', checkAccepts, async function (req, res) {
                 res.status(400).json({ "Error": "The request object is missing all of the 3 possible attributes" });
             }
             else {
-                const loadVolume = (volume !== null && volume !== undefined) ? volume : load.volume;
-                const loadItem = (item !== null && item !== undefined) ? item : load.item;
-                const loadCreation_date = (creation_date !== null && creation_date !== undefined) ? creation_date : load.creation_date;
-                const loadCarrier = (carrier !== null && carrier !== undefined) ? carrier : load.carrier;
-
+                const loadVolume = (volume !== null && volume !== undefined) ? volume : load[0].volume;
+                const loadItem = (item !== null && item !== undefined) ? item : load[0].item;
+                const loadCreation_date = (creation_date !== null && creation_date !== undefined) ? creation_date : load[0].creation_date;
+                const loadCarrier = (carrier !== null && carrier !== undefined) ? carrier : load[0].carrier;
 
                 await update_load(id, loadVolume, loadItem, loadCreation_date, loadCarrier)
-                res.status(204).end()
+                res.status(200).json({
+                    "id": id,
+                    "volume": loadVolume,
+                    "item": loadItem,
+                    "creation_date": loadCreation_date,
+                    "carrier": loadCarrier,
+                    "self": APP_URL + "/loads/" + id
+                })
 
             }
         }
@@ -260,4 +272,4 @@ router.all('/', methodNotAllowed);
 
 /* ------------- End Controller Functions ------------- */
 
-module.exports = { router, get_load, update_load, post_load };
+module.exports = { router, get_load, update_load };

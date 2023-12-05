@@ -129,7 +129,7 @@ async function put_reservation(bid, lid) {
             return datastore.save({ "key": b_key, "data": boat[0] });
         })
         .then(async () => {
-            const carrier = { "id": bid, "name": boat_name };
+            const carrier = bid;
             const loadObject = await get_load(lid);
             return update_load(lid, loadObject[0].volume, loadObject[0].item, loadObject[0].creation_date, carrier);
         });
@@ -180,7 +180,7 @@ router.post('/', customJwtMiddleware, checkAccepts, async function (req, res) {
                 }
 
                 // Update user's boats with the boat's name
-                const userBoats = user.boats ? [...user.boats, name] : [name];
+                const userBoats = user.boats ? [...user.boats.map(id => parseInt(id, 10)), parseInt(key.id, 10)] : [parseInt(key.id, 10)];
                 await update_user(user.id, user.name, userBoats);
 
                 // Return the response
@@ -295,7 +295,15 @@ router.put('/:id', customJwtMiddleware, checkAccepts, async function (req, res) 
                 if (await boat_update_name_constraint(name)) {
                     // Update the boat without changing the owner and loads
                     await update_boat(id, name, type, length, boat[0].loads, boat[0].owner);
-                    res.status(303).location(req.protocol + "://" + req.get("host") + req.baseUrl + "/" + id).end();
+                    res.status(303).location(req.protocol + "://" + req.get("host") + req.baseUrl + "/" + id).json({
+                        "id": id,
+                        "name": name,
+                        "type": type,
+                        "length": length,
+                        "loads": boat[0].loads,
+                        "owner": boat[0].owner,
+                        "self": APP_URL + "/boats/" + id
+                    });
                 } else {
                     res.status(400).set("Content-Type", "application/json").json({ "Error": "A boat with this name already exists" });
                 }
@@ -339,7 +347,15 @@ router.patch('/:id', customJwtMiddleware, checkAccepts, async function (req, res
             } else {
                 // Update the boat without changing the owner and loads
                 await update_boat(id, boatName, boatType, boatLength, boatLoads, boatOwner)
-                res.status(204).end();
+                res.status(200).json({
+                    "id": id,
+                    "name": boatName,
+                    "type": boatType,
+                    "length": boatLength,
+                    "loads": boatLoads,
+                    "owner": boatOwner,
+                    "self": APP_URL + "/boats/" + id
+                });
             }
         }
     }
@@ -353,7 +369,7 @@ router.delete('/:id', customJwtMiddleware, checkAccepts, async function (req, re
     }
 
     try {
-        const boat = await get_boat_helper(req.params.id);
+        const boat = await get_boat(req.params.id);
 
         // No boat with this id exists
         if (!boat || boat.length === 0) {
@@ -369,9 +385,14 @@ router.delete('/:id', customJwtMiddleware, checkAccepts, async function (req, re
                 ));
             }
 
+            // Fetch all users
+            const users = await get_users();
+            // Find the user with the matching name
+            const user = users.find(u => u.name === req.user.name);
+
             // Handle the relationship with the user
             if (boat[0].owner) {
-                await delete_relationship_user_boat(req.params.id, boat[0].owner, get_user, update_user);
+                await delete_relationship_user_boat(req.params.id, user.id, get_user, update_user);
             }
 
             // Delete the boat
@@ -394,16 +415,16 @@ router.put('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async function
     const bid = req.params.bid;
     const lid = req.params.lid;
 
-    const boat = await get_boat_helper(bid);
+    const boat = await get_boat(bid);
     const load = await get_load(lid);
 
     if (boat === undefined || boat === null || load === undefined || load === null) {
         res.status(404).json({ 'Error': 'The specified boat and/or load does not exist' });
-    } else if (boat.owner !== req.user.name) {
+    } else if (boat[0].owner !== req.user.name) {
         // Check if the boat is owned by the user
         res.status(403).json({ 'Error': 'Boat is owned by another user' });
     } else {
-        if (load.carrier !== null) {
+        if (load[0].carrier !== null) {
             res.status(403).json({ 'Error': 'The load is already loaded on another boat' });
         }
         else {
@@ -438,7 +459,7 @@ router.delete('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async funct
         } else if (load[0].carrier === null) {
             res.status(404).json({ 'Error': 'No boat with this boat_id is loaded with the load with this load_id' });
         } else {
-            if (load[0].carrier.id != bid) {
+            if (load[0].carrier !== bid) {
                 res.status(404).json({ 'Error': 'No boat with this boat_id is loaded with the load with this load_id' });
             } else {
                 await delete_relationship_boat_load(bid, lid, get_load, update_load)
@@ -460,35 +481,41 @@ router.get('/:id/loads', customJwtMiddleware, checkAccepts, async function (req,
 
     const id = req.params.id;
 
-    get_boat(id)
-        .then(boat => {
-            if (boat[0] === undefined || boat[0] === null) {
-                res.status(404).json({ 'Error': 'No boat with this id exists' });
-            } else {
-                // Check if the boat is owned by the user
-                if (boat[0].owner !== req.user.name) {
-                    res.status(403).json({ 'Error': 'Boat is owned by another user' });
-                } else {
-                    boat[0]["self"] = APP_URL + "/boats/" + id;
+    try {
+        const boat = await get_boat(id);
 
-                    boat[0]["loads"] = boat[0]["loads"].map(async loadId => {
-                        const getLoad = await get_load(loadId);
-                        return {
-                            "id": loadId,
-                            "item": getLoad[0].item,
-                            "creation_date": getLoad[0].creation_date,
-                            "volume": getLoad[0].volume,
-                            "self": APP_URL + "/loads/" + loadId
-                        };
-                    });
-                    res.status(200).json(boat[0]);
-                }
-            }
-        })
-        .catch(error => {
-            res.status(500).json({ 'Error': 'An error occurred while fetching the boat data' });
+        if (!boat[0]) {
+            return res.status(404).json({ 'Error': 'No boat with this id exists' });
+        }
+
+        // Check if the boat is owned by the user
+        if (boat[0].owner !== req.user.name) {
+            return res.status(403).json({ 'Error': 'Boat is owned by another user' });
+        }
+
+        boat[0]["self"] = APP_URL + "/boats/" + id;
+
+        // Fetch all loads asynchronously
+        const loadPromises = boat[0]["loads"].map(async loadId => {
+            const getLoad = await get_load(loadId);
+            return {
+                "id": loadId,
+                "item": getLoad[0].item,
+                "creation_date": getLoad[0].creation_date,
+                "volume": getLoad[0].volume,
+                "self": APP_URL + "/loads/" + loadId
+            };
         });
+
+        // Wait for all load data to be fetched
+        boat[0]["loads"] = await Promise.all(loadPromises);
+
+        res.status(200).json(boat[0]);
+    } catch (error) {
+        res.status(500).json({ 'Error': 'An error occurred while fetching the boat data' });
+    }
 });
+
 
 router.post('/renderBoats', (req, res) => {
     const boatsData = req.body.boats; // Extract the boats data from the request body

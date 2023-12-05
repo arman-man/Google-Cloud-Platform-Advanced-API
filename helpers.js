@@ -3,7 +3,7 @@ const ds = require('./datastore');
 const datastore = ds.datastore;
 
 // enviornment variables
-const { USER, BOAT, DOMAIN } = require('./constants');
+const { BOAT, DOMAIN } = require('./constants');
 
 // helper function that deletes boat-load relationship if one of them are deleted
 async function delete_relationship_boat_load(bid, lid, get_load_func, put_load_func) {
@@ -33,12 +33,15 @@ async function delete_relationship_boat_load(bid, lid, get_load_func, put_load_f
 
 // helper function that deletes user-boat relationship if one of them are deleted
 async function delete_relationship_user_boat(bid, uid, get_user_func, put_user_func) {
+    // Retrieve the user object
+    const userObject = await get_user_func(uid);
+
     // Get the boat using its ID
     const b_key = datastore.key([BOAT, parseInt(bid, 10)]);
     return datastore.get(b_key)
         .then(async (boat) => {
             // Check if the boat has an owner
-            if (typeof (boat[0].owner) != 'undefined' && boat[0].owner != null && boat[0].owner === uid) {
+            if (typeof boat[0].owner === userObject[0].name) {
                 // Remove the owner from the boat as it's being deleted
                 delete boat[0].owner;
             }
@@ -46,8 +49,6 @@ async function delete_relationship_user_boat(bid, uid, get_user_func, put_user_f
             return datastore.save({ "key": b_key, "data": boat[0] });
         })
         .then(async () => {
-            // Retrieve the user object
-            const userObject = await get_user_func(uid);
             // Remove the boat from the user's list of boats
             const boatIndex = userObject[0].boats.findIndex(element => element == bid);
             if (boatIndex > -1) {
