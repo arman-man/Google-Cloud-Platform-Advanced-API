@@ -41,9 +41,9 @@ const checkAccepts = require('./helpers').checkAccepts
 /* ------------- Begin Boat Model Functions ------------- */
 
 // create a boat
-async function post_boat(name, type, length, loads, owner) {
+async function post_boat(name, type, length, owner) {
     var key = datastore.key(BOAT);
-    const new_boat = { "name": name, "type": type, "length": length, "loads": loads, "owner": owner };
+    const new_boat = { "name": name, "type": type, "length": length, "loads": null, "owner": owner };
     return datastore.save({ "key": key, "data": new_boat }).then(() => { return key });
 }
 
@@ -168,7 +168,7 @@ router.post('/', customJwtMiddleware, checkAccepts, async function (req, res) {
         }
 
         // Create boat
-        post_boat(name, type, length, loads, ownerName)
+        post_boat(name, type, length, ownerName)
             .then(async (key) => {
                 // Fetch all users
                 const users = await get_users();
