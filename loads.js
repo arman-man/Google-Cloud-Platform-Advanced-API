@@ -107,6 +107,24 @@ router.post('/', checkAccepts, function (req, res) {
     }
 });
 
+// get a specified load
+router.get('/:id', checkAccepts, function (req, res) {
+    const id = req.params.id;
+
+    get_load(id)
+        .then(load => {
+            if (load[0] === undefined || load[0] === null) {
+                res.status(404).json({ 'Error': 'No load with this load_id exists' });
+            } else {
+                load[0]["self"] = APP_URL + "/loads/" + id;
+                if (load[0].carrier !== null && load[0].carrier !== undefined) {
+                    load[0].carrier["self"] = APP_URL + "/boats/" + load[0].carrier.id;
+                }
+                res.status(200).json(load[0]);
+            }
+        });
+});
+
 // get all loads
 router.get('/', checkAccepts, function (req, res) {
     get_loads(req) // Assuming this function is now modified to handle pagination and return all loads.
@@ -139,24 +157,6 @@ router.get('/', checkAccepts, function (req, res) {
             } else {
                 // Default to JSON response if no format is specified or if format is not 'html'
                 res.status(200).json(response);
-            }
-        });
-});
-
-// get a specified load
-router.get('/:id', checkAccepts, function (req, res) {
-    const id = req.params.id;
-
-    get_load(id)
-        .then(load => {
-            if (load[0] === undefined || load[0] === null) {
-                res.status(404).json({ 'Error': 'No load with this load_id exists' });
-            } else {
-                load[0]["self"] = APP_URL + "/loads/" + id;
-                if (load[0].carrier !== null && load[0].carrier !== undefined) {
-                    load[0].carrier["self"] = APP_URL + "/boats/" + load[0].carrier.id;
-                }
-                res.status(200).json(load[0]);
             }
         });
 });

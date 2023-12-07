@@ -43,7 +43,7 @@ const checkAccepts = require('./helpers').checkAccepts
 // create a boat
 async function post_boat(name, type, length, owner) {
     var key = datastore.key(BOAT);
-    const new_boat = { "name": name, "type": type, "length": length, "loads": null, "owner": owner };
+    const new_boat = { "name": name, "type": type, "length": length, "loads": [], "owner": owner };
     return datastore.save({ "key": key, "data": new_boat }).then(() => { return key });
 }
 
@@ -204,45 +204,13 @@ router.post('/', customJwtMiddleware, checkAccepts, async function (req, res) {
     }
 });
 
-// with authentication - get the boats of an authenticated owner
-router.get('/', customJwtMiddleware, checkAccepts, function (req, res) {
-    if (req.user && req.user.name) {
-        // JWT is valid, get boats for the user
-        get_owner_boats(req, req.user.name)
-            .then(boats => {
-                const boatsWithDetails = boats.items.map(boat => {
-                    boat["self"] = APP_URL + "/boats/" + boat.id;
-                    boat["loads"] = boat.loads.map(loadId => {
-                        return {
-                            "id": loadId,
-                            "self": APP_URL + "/loads/" + loadId
-                        };
-                    });
-
-                    return boat;
-                });
-
-                const response = {
-                    boats: boatsWithDetails,
-                };
-
-                if (boats.next) {
-                    response.next = boats.next;
-                }
-
-                res.status(200).json(response);
-            })
-            .catch(error => {
-                res.status(500).send(error.message);
-            });
-    } else {
-        // No or invalid JWT
-        res.status(401).json({ 'Error': 'No authentication' });
-    }
-});
-
 // with authentication - get a specified boat
 router.get('/:id', customJwtMiddleware, checkAccepts, function (req, res) {
+    // JWT Authentication Check
+    if (!req.user || !req.user.name) {
+        return res.status(401).json({ 'Error': 'Missing/Invalid JWT' });
+    }
+
     let id = req.params.id;
 
     get_boat(id)
@@ -264,6 +232,42 @@ router.get('/:id', customJwtMiddleware, checkAccepts, function (req, res) {
         });
 });
 
+// with authentication - get the boats of an authenticated owner
+router.get('/', customJwtMiddleware, checkAccepts, function (req, res) {
+    // JWT Authentication Check
+    if (!req.user || !req.user.name) {
+        return res.status(401).json({ 'Error': 'Missing/Invalid JWT' });
+    }
+    get_owner_boats(req, req.user.name)
+        .then(boats => {
+            const boatsWithDetails = boats.items.map(boat => {
+                boat["self"] = APP_URL + "/boats/" + boat.id;
+                boat["loads"] = boat.loads.map(loadId => {
+                    return {
+                        "id": loadId,
+                        "self": APP_URL + "/loads/" + loadId
+                    };
+                });
+
+                return boat;
+            });
+
+            const response = {
+                boats: boatsWithDetails,
+            };
+
+            if (boats.next) {
+                response.next = boats.next;
+            }
+
+            res.status(200).json(response);
+        })
+        .catch(error => {
+            res.status(500).send(error.message);
+        });
+
+});
+
 // with authentication - put boat name, type, length
 router.put('/:id', customJwtMiddleware, checkAccepts, async function (req, res) {
     // JWT Authentication Check
@@ -272,14 +276,14 @@ router.put('/:id', customJwtMiddleware, checkAccepts, async function (req, res) 
     }
 
     if (req.get("content-type") !== "application/json") {
-        res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." });
+        res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data" });
     } else {
         const id = req.params.id;
         const boat = await get_boat(id);
 
         // No boat with that ID
         if (!boat || boat.length === 0) {
-            res.status(404).json({ 'Error': 'No boat with this id exists' });
+            res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Check if the boat is owned by the user
             res.status(403).json({ 'Error': 'Boat is owned by another user' });
@@ -320,14 +324,14 @@ router.patch('/:id', customJwtMiddleware, checkAccepts, async function (req, res
     }
 
     if (req.get("content-type") !== "application/json") {
-        res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data." });
+        res.status(415).set("Content-Type", "application/json").json({ "Error": "Server only accepts application/json data" });
     } else {
         const id = req.params.id;
         const boat = await get_boat(id);
 
         // No boat with that ID
         if (!boat || boat.length === 0) {
-            res.status(404).json({ 'Error': 'No boat with this id exists' });
+            res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Check if the boat is owned by the user
             res.status(403).json({ 'Error': 'Boat is owned by another user' });
@@ -371,9 +375,9 @@ router.delete('/:id', customJwtMiddleware, checkAccepts, async function (req, re
     try {
         const boat = await get_boat(req.params.id);
 
-        // No boat with this id exists
+        // No boat with this boat_id exists
         if (!boat || boat.length === 0) {
-            return res.status(404).json({ 'Error': 'No boat with this id exists' });
+            return res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Boat is owned by another person
             return res.status(403).json({ 'Error': 'Boat is owned by another person or boat does not exist' });
@@ -437,6 +441,50 @@ router.put('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async function
     }
 });
 
+// get all the loads of a specified boat with authentication
+router.get('/:id/loads', customJwtMiddleware, checkAccepts, async function (req, res) {
+    // JWT Authentication Check
+    if (!req.user || !req.user.name) {
+        return res.status(401).json({ 'Error': 'Missing/Invalid JWT' });
+    }
+
+    const id = req.params.id;
+
+    try {
+        const boat = await get_boat(id);
+
+        if (!boat[0]) {
+            return res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
+        }
+
+        // Check if the boat is owned by the user
+        if (boat[0].owner !== req.user.name) {
+            return res.status(403).json({ 'Error': 'Boat is owned by another user' });
+        }
+
+        boat[0]["self"] = APP_URL + "/boats/" + id;
+
+        // Fetch all loads asynchronously
+        const loadPromises = boat[0]["loads"].map(async loadId => {
+            const getLoad = await get_load(loadId);
+            return {
+                "id": loadId,
+                "item": getLoad[0].item,
+                "creation_date": getLoad[0].creation_date,
+                "volume": getLoad[0].volume,
+                "self": APP_URL + "/loads/" + loadId
+            };
+        });
+
+        // Wait for all load data to be fetched
+        boat[0]["loads"] = await Promise.all(loadPromises);
+
+        res.status(200).json(boat[0]);
+    } catch (error) {
+        res.status(500).json({ 'Error': 'An error occurred while fetching the boat data' });
+    }
+});
+
 // with authentication - delete relationship between boat-load
 router.delete('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async function (req, res) {
     // JWT Authentication Check
@@ -471,51 +519,6 @@ router.delete('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async funct
         }
     }
 });
-
-// get a specified boat's loads with authentication
-router.get('/:id/loads', customJwtMiddleware, checkAccepts, async function (req, res) {
-    // JWT Authentication Check
-    if (!req.user || !req.user.name) {
-        return res.status(401).json({ 'Error': 'Missing/Invalid JWT' });
-    }
-
-    const id = req.params.id;
-
-    try {
-        const boat = await get_boat(id);
-
-        if (!boat[0]) {
-            return res.status(404).json({ 'Error': 'No boat with this id exists' });
-        }
-
-        // Check if the boat is owned by the user
-        if (boat[0].owner !== req.user.name) {
-            return res.status(403).json({ 'Error': 'Boat is owned by another user' });
-        }
-
-        boat[0]["self"] = APP_URL + "/boats/" + id;
-
-        // Fetch all loads asynchronously
-        const loadPromises = boat[0]["loads"].map(async loadId => {
-            const getLoad = await get_load(loadId);
-            return {
-                "id": loadId,
-                "item": getLoad[0].item,
-                "creation_date": getLoad[0].creation_date,
-                "volume": getLoad[0].volume,
-                "self": APP_URL + "/loads/" + loadId
-            };
-        });
-
-        // Wait for all load data to be fetched
-        boat[0]["loads"] = await Promise.all(loadPromises);
-
-        res.status(200).json(boat[0]);
-    } catch (error) {
-        res.status(500).json({ 'Error': 'An error occurred while fetching the boat data' });
-    }
-});
-
 
 router.post('/renderBoats', (req, res) => {
     const boatsData = req.body.boats; // Extract the boats data from the request body
