@@ -1,52 +1,7 @@
-<!-- JavaScript to handle the fetch request -->
-<script>
-    function loadBoats() {
-        const jwtToken = document.getElementById('jwtToken').innerText;
-        fetch('/boats', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`,
-                'Accept': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Handle your response data here
-                // Example: if you want to redirect to /boats/renderBoats
-                fetch('/boats/renderBoats', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ boats: data.boats })
-                }).then(res => {
-                    if (res.ok) {
-                        return res.text();
-                    }
-                    throw new Error('Network response was not ok');
-                }).then(html => {
-                    document.body.innerHTML = html;
-                }).catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
-    }
-</script>
+<h2>Profile Page</h2>
 
-<h2>GET /profile</h2>
-<p>User Info Page for: {{user_name}}</p>
+<p><span class="user-label">User:</span> <span class="user-account">{{user_name}}</span></p>
 
-<!-- JWT token display (hidden or visible as per your requirement) -->
-<p id="jwtToken" style="display:none;">{{user_JWT_id_token}}</p>
-
-
-<!-- Button to trigger the JavaScript function -->
-<button onclick="loadBoats()">Boats</button>
+<div class="jwt-container">
+    <p><span class="jwt-label">JWT: </span> <span class="jwt-value">{{user_JWT_id_token}}</span></p>
+</div>

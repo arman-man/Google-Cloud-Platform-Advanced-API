@@ -1,28 +1,19 @@
-<h2>GET /</h2>
+<h2>Home Page</h2>
 
-<h3>Logged in guide</h3>
+<p class="purpose-home">The purpose of this UI is to create user accounts using Auth0, in order to test the RESTful API
+    with
+    Postman.</p>
+
+<p><span class="login-label">Login Status:</span> <span class="login-status">{{message}}</span></p>
+
+<p>Logged in guide:</p>
 <ul>
-    <li>If logged in, select 'profile' to view the user's JWT.</li>
-    <li>If logged in, select 'login' to switch to another user.</li>
-    <li>If logged in, select 'logout' to logout.</li>
+    <li>If logged in, select "Profile" to view the user's JWT.</li>
+    <li>If logged in, select "Login or Sign Up" to login to another user or sign up.</li>
 </ul>
 
-<h3>Logged off guide</h3>
+<p>Logged off guide:</p>
 <ul>
-    <li>If logged off, select 'profile' to log in and view the user's JWT.</li>
-    <li>If logged off, select 'login' to login to a user.</li>
+    <li>If logged off, select "Profile" to login and view the user's JWT.</li>
+    <li>If logged off, select "Login or Sign Up" to login to a user or sign up.</li>
 </ul>
-
-<form action="/login" method="GET" class="inline-form">
-    <button type="submit">Login</button>
-</form>
-
-<form action="/logout" method="GET" class="inline-form">
-    <button type="submit">Logout</button>
-</form>
-
-<form action="/profile" method="GET" class="inline-form">
-    <button type="submit">Profile</button>
-</form>
-
-<p>Login Status: {{message}}</p>

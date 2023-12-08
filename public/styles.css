@@ -1,74 +1,230 @@
-/* Basic styling for the entire body */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    line-height: 1.6;
-    margin: 0;
-    padding: 20px;
-}
+/* ----- Start Purpose Styles ----- */
 
-/* Styling for headers */
-h2,
-h3 {
-    color: #333;
-}
-
-/* List styling */
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
+.purpose-home {
+    font-size: 17px;
+    /* Slightly larger than regular text */
+    font-weight: 600;
+    /* Semi-bold */
+    color: #2c3e50;
+    /* Dark blue */
+    border-left: 4px solid #2980b9;
+    /* Blue border on the left */
+    padding: 8px;
     margin-bottom: 10px;
 }
 
-/* Button styling inside forms */
-button {
-    background-color: #5cb85c;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
-}
+/* ----- End Purpose Styles ----- */
 
-button:hover {
-    background-color: #4cae4c;
-}
+/* ----- Start Login Label and Login Status Styles ----- */
 
-/* Inline form style */
-.inline-form {
+.login-label {
+    font-size: 16px;
+    /* Slightly larger for emphasis */
+    font-weight: 700;
+    /* Bold for prominence */
+    color: #3a4a5a;
+    /* A slightly darker shade of blue for contrast */
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Subtle light background */
+    padding: 2px 6px;
+    /* Small padding for better text visibility */
+    border-radius: 2px;
+    /* Soft rounded corners */
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
     display: inline-block;
-    margin-right: 10px;
+    /* Ensure background and padding encloses text */
 }
 
-/* Login Status message */
-p {
-    font-style: italic;
-    color: #555;
+.login-status {
+    font-size: 15px;
+    /* Slightly larger than regular text */
+    font-weight: 600;
+    /* Semi-bold */
+    color: white;
+    /* White text for contrast */
+    background-color: #435b72;
+    /* Dark blue background */
+    padding: 4px 8px;
+    border-radius: 4px;
+    /* Rounded corners */
+    display: inline-block;
+    /* Ensures background encompasses the text */
+    margin-left: 5px;
+    /* Space between 'Login Status:' and the status text */
 }
 
-/* The body style will inherit from the Welcome Page */
+/* ----- End Login Status Styles ----- */
 
-/* User Info Page specific styles */
-/* Header styling */
-h2 {
-    margin-bottom: 20px;
+/* ----- Start Navbar Styles ----- */
+
+.navbar {
+    position: fixed;
+    /* or absolute, depending on your need */
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Ensure it stretches across the full width */
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2c3e50;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    color: white;
 }
 
-/* Paragraph styling */
-p {
-    background-color: #eef;
-    border-left: 4px solid #5cb85c;
+.navbar h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.nav-buttons {
+    display: flex;
+    padding-right: 3%;
+}
+
+.inline-form {
+    margin: 0 5px;
+}
+
+.navbar button {
+    background-color: #3b4f63;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* ----- End Navbar Styles ----- */
+
+/* ----- Start User Label and User Account Styles ----- */
+
+.user-label {
+    font-size: 16px;
+    /* Slightly larger for emphasis */
+    font-weight: 700;
+    /* Bold for prominence */
+    color: #3a4a5a;
+    /* A slightly darker shade of blue for contrast */
+    background-color: rgba(255, 255, 255, 0.2);
+    /* Subtle light background */
+    padding: 2px 6px;
+    /* Small padding for better text visibility */
+    border-radius: 2px;
+    /* Soft rounded corners */
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    display: inline-block;
+    /* Ensure background and padding encloses text */
+}
+
+.user-account {
+    font-size: 15px;
+    /* Slightly larger than regular text */
+    font-weight: 600;
+    /* Semi-bold */
+    color: white;
+    /* White text for contrast */
+    background-color: #435b72;
+    /* Dark blue background */
+    padding: 4px 8px;
+    border-radius: 4px;
+    /* Rounded corners */
+    display: inline-block;
+    /* Ensures background encompasses the text */
+    margin-left: 5px;
+    /* Space between 'Login Status:' and the status text */
+}
+
+/* ----- End User Label and User Account Styles ----- */
+
+/* ----- Start user_JWT_id_token Styles ----- */
+
+.jwt-container {
+    word-wrap: break-word;
+    /* Break long words */
+    max-width: 100%;
+    /* Contain within the width of its container */
+    overflow-wrap: break-word;
+    /* Allow breaking and wrapping of long words */
+}
+
+/* ----- End user_JWT_id_token Styles ----- */
+
+/* ----- Start jwt_label and jwt_value Styles ----- */
+
+.jwt-label {
+    font-weight: bold;
+    /* Bold font for label */
+    color: #2980b9;
+    /* Blue color for emphasis */
+}
+
+.jwt-value {
+    color: #7e868b;
+    /* Light grey for readability */
+    word-break: break-all;
+    /* Break words to prevent overflow */
+}
+
+/* ----- End jwt_label and jwt_value Styles ----- */
+
+/* ----- Start General body Styles ----- */
+
+body {
+    background-color: #f4f4f4;
+    /* Dark blue background for the whole page */
+    color: #333;
+    /* Light color for the text for better readability */
+    font-family: 'Arial', sans-serif;
+    /* Modern, clean font */
+    line-height: 1.6;
+    /* Spacing between lines for better readability */
+    margin: 0;
+    /* Remove default margin */
+    padding: 2%;
+    /* Remove default padding */
+    padding-top: 5%;
+}
+
+p,
+ul {
+    color: #000000;
+    /* Light grey for regular text */
+}
+
+h2,
+h3,
+h4 {
+    color: #2980b9;
+    /* Consistent blue color for headings */
+    margin-top: 20px;
+    /* Spacing above headings */
+}
+
+ul {
+    list-style-type: none;
+    /* This removes the bullet points */
+}
+
+ul li {
+    background-color: #fff;
+    margin-bottom: 10px;
     padding: 10px;
-    margin-top: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: -2%;
 }
 
-/* JWT token specific style */
-p:nth-of-type(2) {
-    /* This targets the second <p> element, which contains the JWT */
-    background-color: #fee;
-    border-color: #d9534f;
+h2 {
+    text-align: center;
 }
+
+/* ----- End General body Styles ----- */

@@ -520,11 +520,6 @@ router.delete('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async funct
     }
 });
 
-router.post('/renderBoats', (req, res) => {
-    const boatsData = req.body.boats; // Extract the boats data from the request body
-    res.render('boats', { boats: boatsData }); // Render boats.hbs with the boats data
-});
-
 // Handle unsupported methods for '/:id'
 router.all('/:id', methodNotAllowed);
 
