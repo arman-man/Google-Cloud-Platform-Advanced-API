@@ -1,7 +1,15 @@
+// express.js server-side framework
+const express = require('express');
+const router = express.Router();
+
 // datastore
 const ds = require('./datastore');
 const datastore = ds.datastore;
 const fromDatastore = ds.fromDatastore
+
+// converts json objects to a more easily accessible format
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
 
 // enviornment variables
 const { USER } = require('./constants');
@@ -50,4 +58,18 @@ async function update_user(id, name, boats) {
 
 /* ------------- End Model Functions ------------- */
 
-module.exports = { get_users, post_user, update_user, get_user };
+/* ------------- Begin Controller Functions ------------- */
+
+// get all users
+router.get('/', async function (req, res) {
+    try {
+        const users = await get_users();
+        res.status(200).json(users);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+/* ------------- End Controller Functions ------------- */
+
+module.exports = { router, get_users, post_user, update_user, get_user };

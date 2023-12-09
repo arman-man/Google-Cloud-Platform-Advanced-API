@@ -171,7 +171,7 @@ router.put('/:id', checkAccepts, async function (req, res) {
         const load = await get_load(id);
 
         //no load with that ID
-        if (load === undefined || load === null) {
+        if (load[0] === undefined || load[0] === null) {
             res.status(404).json({ 'Error': 'No load with this load_id exists' });
         } else {
             const volume = req.body.volume;
@@ -208,7 +208,7 @@ router.patch('/:id', checkAccepts, async function (req, res) {
         const load = await get_load(id);
 
         //no load with that ID
-        if (load === undefined || load === null) {
+        if (load[0] === undefined || load[0] === null) {
             res.status(404).json({ 'Error': 'No load with this load_id exists' });
         } else {
             const volume = req.body.volume;

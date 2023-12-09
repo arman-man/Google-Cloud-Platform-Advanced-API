@@ -282,7 +282,7 @@ router.put('/:id', customJwtMiddleware, checkAccepts, async function (req, res) 
         const boat = await get_boat(id);
 
         // No boat with that ID
-        if (!boat || boat.length === 0) {
+        if (boat[0] === undefined || boat[0] === null) {
             res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Check if the boat is owned by the user
@@ -330,7 +330,7 @@ router.patch('/:id', customJwtMiddleware, checkAccepts, async function (req, res
         const boat = await get_boat(id);
 
         // No boat with that ID
-        if (!boat || boat.length === 0) {
+        if (boat[0] === undefined || boat[0] === null) {
             res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Check if the boat is owned by the user
@@ -346,7 +346,9 @@ router.patch('/:id', customJwtMiddleware, checkAccepts, async function (req, res
             const boatLoads = boat[0].loads;
 
             // Input validation
-            if (!boatName && !boatType && !boatLength) {
+            if ((req.body.name === undefined || req.body.name === null) &&
+                (req.body.type === undefined || req.body.type === null) &&
+                (req.body.length === undefined || req.body.length === null)) {
                 res.status(400).json({ "Error": "The request object is missing all of the possible attributes" });
             } else {
                 // Update the boat without changing the owner and loads
@@ -376,11 +378,11 @@ router.delete('/:id', customJwtMiddleware, checkAccepts, async function (req, re
         const boat = await get_boat(req.params.id);
 
         // No boat with this boat_id exists
-        if (!boat || boat.length === 0) {
+        if (boat[0] === undefined || boat[0] === null) {
             return res.status(404).json({ 'Error': 'No boat with this boat_id exists' });
         } else if (boat[0].owner !== req.user.name) {
             // Boat is owned by another person
-            return res.status(403).json({ 'Error': 'Boat is owned by another person or boat does not exist' });
+            return res.status(403).json({ 'Error': 'Boat is owned by another person' });
         } else {
             // Handle the relationship with loads
             if (boat[0].loads && boat[0].loads.length > 0) {
@@ -422,7 +424,7 @@ router.put('/:bid/loads/:lid', customJwtMiddleware, checkAccepts, async function
     const boat = await get_boat(bid);
     const load = await get_load(lid);
 
-    if (boat === undefined || boat === null || load === undefined || load === null) {
+    if (boat[0] === undefined || boat[0] === null || load[0] === undefined || load[0] === null) {
         res.status(404).json({ 'Error': 'The specified boat and/or load does not exist' });
     } else if (boat[0].owner !== req.user.name) {
         // Check if the boat is owned by the user
