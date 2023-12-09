@@ -6,7 +6,7 @@ Implemented a RESTful API with Node.js and Express.js, backed by Google Datastor
 Utilized Auth0 for OAuth 2.0 authorization and OpenID Connect authentication.
 
 ## Installation & Running Locally
-Open the file ```constants.js```, and change the value of the constant ```APP_URL``` to ```'http://localhost:8080'```
+Open the file ```constants.js``` and change the value of the constant ```APP_URL``` to ```http://localhost:8080/```
 
 ```npm install``` in the root directory
 
