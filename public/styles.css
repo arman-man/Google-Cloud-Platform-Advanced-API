@@ -1,76 +1,10 @@
-/* ----- Start Purpose Styles ----- */
-
-.purpose-home {
-    font-size: 17px;
-    /* Slightly larger than regular text */
-    font-weight: 600;
-    /* Semi-bold */
-    color: #2c3e50;
-    /* Dark blue */
-    border-left: 4px solid #2980b9;
-    /* Blue border on the left */
-    padding: 8px;
-    margin-bottom: 10px;
-}
-
-/* ----- End Purpose Styles ----- */
-
-/* ----- Start Login Label and Login Status Styles ----- */
-
-.login-label {
-    font-size: 16px;
-    /* Slightly larger for emphasis */
-    font-weight: 700;
-    /* Bold for prominence */
-    color: #3a4a5a;
-    /* A slightly darker shade of blue for contrast */
-    background-color: rgba(255, 255, 255, 0.2);
-    /* Subtle light background */
-    padding: 2px 6px;
-    /* Small padding for better text visibility */
-    border-radius: 2px;
-    /* Soft rounded corners */
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
-    display: inline-block;
-    /* Ensure background and padding encloses text */
-}
-
-.login-status {
-    font-size: 15px;
-    /* Slightly larger than regular text */
-    font-weight: 600;
-    /* Semi-bold */
-    color: white;
-    /* White text for contrast */
-    background-color: #435b72;
-    /* Dark blue background */
-    padding: 4px 8px;
-    border-radius: 4px;
-    /* Rounded corners */
-    display: inline-block;
-    /* Ensures background encompasses the text */
-    margin-left: 5px;
-    /* Space between 'Login Status:' and the status text */
-}
-
-.login-status,
-.login-label {
-    margin-top: 1%;
-}
-
-/* ----- End Login Status Styles ----- */
-
 /* ----- Start Navbar Styles ----- */
 
 .navbar {
     position: fixed;
-    /* or absolute, depending on your need */
     top: 0;
     left: 0;
     width: 100%;
-    /* Ensure it stretches across the full width */
-
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -104,85 +38,72 @@
     cursor: pointer;
     border: none;
     border-radius: 5px;
-    transition: background-color 0.3s ease;
 }
 
 /* ----- End Navbar Styles ----- */
 
-/* ----- Start User Label and User Account Styles ----- */
+/* ----- Start Purpose Styles ----- */
 
-.user-label {
-    font-size: 16px;
-    /* Slightly larger for emphasis */
-    font-weight: 700;
-    /* Bold for prominence */
-    color: #3a4a5a;
-    /* A slightly darker shade of blue for contrast */
-    background-color: rgba(255, 255, 255, 0.2);
-    /* Subtle light background */
-    padding: 2px 6px;
-    /* Small padding for better text visibility */
-    border-radius: 2px;
-    /* Soft rounded corners */
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
-    display: inline-block;
-    /* Ensure background and padding encloses text */
+.purpose-home {
+    font-size: 17px;
+    font-weight: 600;
+    color: #2c3e50;
+    border-left: 4px solid #2980b9;
+    padding: 8px;
+    margin-bottom: 10px;
 }
 
-.user-account {
+/* ----- End Purpose Styles ----- */
+
+/* ----- Start user-label, login-label, user-account, login-status Styles ----- */
+
+.user-label,
+.login-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #3a4a5a;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 2px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+}
+
+.user-account,
+.login-status {
     font-size: 15px;
-    /* Slightly larger than regular text */
     font-weight: 600;
-    /* Semi-bold */
     color: white;
-    /* White text for contrast */
-    background-color: #435b72;
-    /* Dark blue background */
+    background-color: #2980b9;
     padding: 4px 8px;
     border-radius: 4px;
-    /* Rounded corners */
     display: inline-block;
-    /* Ensures background encompasses the text */
     margin-left: 5px;
-    /* Space between 'Login Status:' and the status text */
 }
 
 .user-label,
-.user-account {
+.user-account,
+.login-label,
+.login-status {
     margin-top: 1%;
     margin-bottom: 1%;
 }
 
-/* ----- End User Label and User Account Styles ----- */
-
-/* ----- Start user_JWT_id_token Styles ----- */
-
-.jwt-container {
-    word-wrap: break-word;
-    /* Break long words */
-    max-width: 100%;
-    /* Contain within the width of its container */
-    overflow-wrap: break-word;
-    /* Allow breaking and wrapping of long words */
-}
-
-/* ----- End user_JWT_id_token Styles ----- */
+/* ----- End user-label, login-label, user-account, login-status Styles ----- */
 
 /* ----- Start jwt_label and jwt_value Styles ----- */
 
 .jwt-label {
     font-weight: bold;
-    /* Bold font for label */
     color: #2980b9;
-    /* Blue color for emphasis */
 }
 
 .jwt-value {
-    color: #7e868b;
-    /* Light grey for readability */
     word-break: break-all;
-    /* Break words to prevent overflow */
+}
+
+.jwt-container {
+    background-color: #ebeef1;
 }
 
 /* ----- End jwt_label and jwt_value Styles ----- */
@@ -190,47 +111,30 @@
 /* ----- Start General body Styles ----- */
 
 body {
-    background-color: #f4f4f4;
-    /* Dark blue background for the whole page */
+    background-color: #faf7f7;
     color: #333;
-    /* Light color for the text for better readability */
     font-family: 'Arial', sans-serif;
-    /* Modern, clean font */
     line-height: 1.6;
-    /* Spacing between lines for better readability */
     margin: 0;
-    /* Remove default margin */
     padding: 2%;
-    /* Remove default padding */
     padding-top: 5%;
 }
 
 p,
 ul {
-    color: #000000;
-    /* Light grey for regular text */
-}
-
-h2,
-h3,
-h4 {
+    font-weight: bold;
     color: #2980b9;
-    /* Consistent blue color for headings */
-    margin-top: 20px;
-    /* Spacing above headings */
+    list-style-type: none;
 }
 
 .ul-label {
-    margin-top: 3%;
-}
-
-ul {
-    list-style-type: none;
-    /* This removes the bullet points */
+    margin-top: 2%;
+    margin-left: 2%;
 }
 
 ul li {
     background-color: #fff;
+    color: #6a6e71;
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
@@ -240,6 +144,8 @@ ul li {
 
 h2 {
     text-align: center;
+    color: #2980b9;
+    margin-top: 20px;
 }
 
 /* ----- End General body Styles ----- */
