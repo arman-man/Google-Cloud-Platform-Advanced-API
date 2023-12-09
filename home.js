@@ -58,10 +58,10 @@ router.get('/', async (req, res) => {
         }
 
         // Render the 'home' view with a logged-in message
-        res.render('home', { message: 'Logged in' });
+        res.render('home', { message: 'Logged-in' });
     } else {
         // Render the 'home' view with a logged-out message
-        res.render('home', { message: 'Logged out' });
+        res.render('home', { message: 'Logged-out' });
     }
 });
 
