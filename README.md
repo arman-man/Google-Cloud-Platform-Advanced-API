@@ -1,9 +1,9 @@
 # Harbor-Logistics-Platform
-Developed a cloud application for harbor logistics, including planning and deployment on Google Cloud Platform, ensuring scalability and security.
+Developed a cloud application for harbor logistics, including deployment on Google Cloud Platform, ensuring scalability and security.
 
 Implemented a RESTful API with Node.js and Express.js, backed by Google Datastore, and created a responsive user interface using Handlebars.js, HTML, and CSS.
 
-Utilized Auth0 for robust OAuth 2.0 authorization and OpenID Connect authentication, focusing on secure user access and data protection.
+Utilized Auth0 for OAuth 2.0 authorization and OpenID Connect authentication, focusing on secure user access and data protection.
 
 ## Installation & Running Locally
 Open the file ```constants.js``` and change the value of ```APP_URL``` to ```http://localhost:8080```
