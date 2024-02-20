@@ -1,5 +1,5 @@
 # Harbor-Logistics-Platform
-Developed a cloud application for harbor logistics, including deployment on Google Cloud Platform, ensuring scalability and security.
+Developed a cloud application for freight and harbor logistics, deployed onto Google Cloud Platform, with a focus on security to protect user data.
 
 Implemented a RESTful API with Node.js and Express.js, backed by Google Datastore, and created a responsive user interface using Handlebars.js, HTML, and CSS.
 
