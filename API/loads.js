@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // datastore
-const ds = require('./datastore');
+const ds = require('../datastore');
 const datastore = ds.datastore;
 const fromDatastore = ds.fromDatastore
 
@@ -12,16 +12,16 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { LOAD, APP_URL } = require('./constants');
+const { LOAD, APP_URL } = require('../constants');
 
 // helper function for managing boat-load relationship
-const delete_relationship_boat_load = require('./helpers').delete_relationship_boat_load;
+const delete_relationship_boat_load = require('../helpers').delete_relationship_boat_load;
 
 // middleware for 405
-const methodNotAllowed = require('./helpers').methodNotAllowed
+const methodNotAllowed = require('../helpers').methodNotAllowed
 
 // middleware for 406
-const checkAccepts = require('./helpers').checkAccepts
+const checkAccepts = require('../helpers').checkAccepts
 
 /* ------------- Begin load Model Functions ------------- */
 

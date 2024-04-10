@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { CLIENT_ID, CLIENT_SECRET, DOMAIN, APP_URL } = require('./constants');
+const { CLIENT_ID, CLIENT_SECRET, DOMAIN, APP_URL } = require('../constants');
 
 // Axios for HTTP requests
 const axios = require('axios');
@@ -17,10 +17,10 @@ const post_user = require('./users').post_user;
 const get_users = require('./users').get_users;
 
 // middleware for 405
-const methodNotAllowed = require('./helpers').methodNotAllowed
+const methodNotAllowed = require('../helpers').methodNotAllowed
 
 // middleware for 406
-const checkAccepts = require('./helpers').checkAccepts
+const checkAccepts = require('../helpers').checkAccepts
 
 /* ------------- Begin Auth0 login/logout/profile ------------- */
 

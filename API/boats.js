@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // datastore
-const ds = require('./datastore');
+const ds = require('../datastore');
 const datastore = ds.datastore;
 const fromDatastore = ds.fromDatastore
 
@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { BOAT, APP_URL } = require('./constants');
+const { BOAT, APP_URL } = require('../constants');
 
 // load functions for boat-load relationship
 const get_load = require('./loads').get_load;
@@ -24,19 +24,19 @@ const get_user = require('./users').get_user;
 const get_users = require('./users').get_users;
 
 // helper function for managing boat-load relationship
-const delete_relationship_boat_load = require('./helpers').delete_relationship_boat_load;
+const delete_relationship_boat_load = require('../helpers').delete_relationship_boat_load;
 
 // helper function for managing user-boat relationship
-const delete_relationship_user_boat = require('./helpers').delete_relationship_user_boat;
+const delete_relationship_user_boat = require('../helpers').delete_relationship_user_boat;
 
 // custom JWT middleware for verifying CRUD on users-boats
-const customJwtMiddleware = require('./helpers').customJwtMiddleware
+const customJwtMiddleware = require('../helpers').customJwtMiddleware
 
 // middleware for 405
-const methodNotAllowed = require('./helpers').methodNotAllowed
+const methodNotAllowed = require('../helpers').methodNotAllowed
 
 // middleware for 406
-const checkAccepts = require('./helpers').checkAccepts
+const checkAccepts = require('../helpers').checkAccepts
 
 /* ------------- Begin Boat Model Functions ------------- */
 

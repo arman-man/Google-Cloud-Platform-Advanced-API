@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // datastore
-const ds = require('./datastore');
+const ds = require('../datastore');
 const datastore = ds.datastore;
 const fromDatastore = ds.fromDatastore
 
@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { USER } = require('./constants');
+const { USER } = require('../constants');
 
 /* ------------- Begin User Model Functions ------------- */
 
