@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 // datastore
-const ds = require('../datastore');
+const ds = require('../database/datastore');
 const datastore = ds.datastore;
 const fromDatastore = ds.fromDatastore
 
@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { BOAT, APP_URL } = require('../constants');
+const { BOAT, APP_URL } = require('./utility/constants');
 
 // load functions for boat-load relationship
 const get_load = require('./loads').get_load;

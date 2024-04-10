@@ -1,5 +1,5 @@
 // datastore
-const ds = require('./datastore');
+const ds = require('../../database/datastore');
 const datastore = ds.datastore;
 
 // enviornment variables

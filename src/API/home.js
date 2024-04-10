@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 router.use(bodyParser.json());
 
 // enviornment variables
-const { CLIENT_ID, CLIENT_SECRET, DOMAIN, APP_URL } = require('../constants');
+const { CLIENT_ID, CLIENT_SECRET, DOMAIN, APP_URL } = require('./utility/constants');
 
 // Axios for HTTP requests
 const axios = require('axios');

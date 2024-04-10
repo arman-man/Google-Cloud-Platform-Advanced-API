@@ -2,7 +2,7 @@
 const router = module.exports = require('express').Router();
 
 // routers
-router.use('/', require('./API/home').router);
-router.use('/users', require('./API/users').router);
-router.use('/boats', require('./API/boats').router);
-router.use('/loads', require('./API/loads').router);
+router.use('/', require('./app/home').router);
+router.use('/users', require('./app/users').router);
+router.use('/boats', require('./app/boats').router);
+router.use('/loads', require('./app/loads').router);
