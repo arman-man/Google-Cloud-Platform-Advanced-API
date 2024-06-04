@@ -1,5 +1,5 @@
 # Google-Cloud-Platform-Advanced-API
-Developed a cloud application for freight and harbor logistics, deployed onto Google Cloud Platform, with a focus on security to protect user data.o
+Developed a cloud application for freight and harbor logistics, deployed onto Google Cloud Platform, with a focus on security to protect user data.
 
 Implemented a RESTful API with Node.js and Express.js, backed by Google Datastore, and created a responsive user interface using Handlebars.js, HTML, and CSS.
 
